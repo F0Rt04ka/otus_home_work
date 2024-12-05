@@ -1,4 +1,4 @@
-module github.com/F0Rt04ka/hw03_frequency_analysis
+module github.com/F0Rt04ka/otus_home_work/hw03_frequency_analysis
 
 go 1.22
 

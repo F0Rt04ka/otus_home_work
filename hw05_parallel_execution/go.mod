@@ -1,4 +1,4 @@
-module github.com/F0Rt04ka/hw05_parallel_execution
+module github.com/F0Rt04ka/otus_home_work/hw05_parallel_execution
 
 go 1.22
 

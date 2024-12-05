@@ -1,4 +1,4 @@
-module github.com/F0Rt04ka/hw11_telnet_client
+module github.com/F0Rt04ka/otus_home_work/hw11_telnet_client
 
 go 1.22
 
