@@ -1,4 +1,4 @@
-module github.com/F0Rt04ka/hw10_program_optimization
+module github.com/F0Rt04ka/otus_home_work/hw10_program_optimization
 
 go 1.22
 

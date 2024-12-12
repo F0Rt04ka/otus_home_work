@@ -1,4 +1,4 @@
-module github.com/F0Rt04ka/hw04_lru_cache
+module github.com/F0Rt04ka/otus_home_work/hw04_lru_cache
 
 go 1.22
 
