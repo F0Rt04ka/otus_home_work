@@ -11,13 +11,9 @@ func Top10(str string) []string {
 	}
 
 	words := make(map[string]int)
-	max := 0
 
 	for _, word := range strings.Fields(str) {
 		words[word]++
-		if words[word] > max {
-			max = words[word]
-		}
 	}
 
 	outputLen := 10
