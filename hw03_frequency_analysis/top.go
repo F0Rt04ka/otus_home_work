@@ -7,7 +7,7 @@ import (
 
 func Top10(str string) []string {
 	if str == "" {
-		return []string{}
+		return nil
 	}
 
 	words := make(map[string]int)
