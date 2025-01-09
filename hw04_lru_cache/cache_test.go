@@ -49,13 +49,59 @@ func TestCache(t *testing.T) {
 		require.Nil(t, val)
 	})
 
-	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+	t.Run("simple purge logic", func(t *testing.T) {
+		c := NewCache(3)
+		c.Set("1", 10)
+		c.Set("2", 20)
+		c.Set("3", 30)
+
+		c.Set("4", 40) // [40 30 20]
+
+		result := false
+		_, result = c.Get("1")
+		require.False(t, result)
+		_, result = c.Get("2")
+		require.True(t, result)
+		_, result = c.Get("3")
+		require.True(t, result)
+		_, result = c.Get("4")
+		require.True(t, result)
+	})
+
+	t.Run("purge logic with get and set", func(t *testing.T) {
+		c := NewCache(3)
+		c.Set("1", 10)
+		c.Set("2", 20)
+		c.Set("3", 30)
+
+		c.Set("1", 11) // [11 30 20]
+		c.Set("4", 40) // [40 11 30]
+
+		result := false
+		_, result = c.Get("3")
+		require.True(t, result)
+		_, result = c.Get("1")
+		require.True(t, result)
+		_, result = c.Get("4")
+		require.True(t, result)
+		_, result = c.Get("2")
+		require.False(t, result)
+
+		c.Get("3")     // [30 40 11]
+		c.Set("5", 50) // [50 30 40]
+
+		_, result = c.Get("4")
+		require.True(t, result)
+		_, result = c.Get("3")
+		require.True(t, result)
+		_, result = c.Get("5")
+		require.True(t, result)
+		_, result = c.Get("1")
+		require.False(t, result)
 	})
 }
 
-func TestCacheMultithreading(t *testing.T) {
-	t.Skip() // Remove me if task with asterisk completed.
+func TestCacheMultithreading(t *testing.T) { //nolint
 
 	c := NewCache(10)
 	wg := &sync.WaitGroup{}
