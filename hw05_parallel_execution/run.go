@@ -16,6 +16,11 @@ func Run(tasks []Task, n, m int) error {
 	tasksCh := make(chan Task)
 	var currentErrors int64
 
+	defer func() {
+		close(tasksCh)
+		wg.Wait()
+	}()
+
 	for i := 0; i < n; i++ {
 		wg.Add(1)
 		go func() {
@@ -33,13 +38,9 @@ func Run(tasks []Task, n, m int) error {
 		tasksCh <- task
 
 		if atomic.LoadInt64(&currentErrors) >= int64(m) {
-			close(tasksCh)
 			return ErrErrorsLimitExceeded
 		}
 	}
-
-	close(tasksCh)
-	wg.Wait()
 
 	return nil
 }
