@@ -51,7 +51,10 @@ func TestValidate(t *testing.T) {
 				Role:   "test",
 				Phones: []string{"123"},
 			},
-			expectedErr: fmt.Errorf("ID: value length must be equal to 36, Age: value must be greater than 18, Role: value must be one of admin,stuff, Phones[0]: value length must be equal to 11"),
+			expectedErr: fmt.Errorf("ID: value length must be equal to 36, " +
+				"Age: value must be greater than 18, " +
+				"Role: value must be one of admin,stuff, " +
+				"Phones[0]: value length must be equal to 11"),
 		},
 		{
 			in: User{

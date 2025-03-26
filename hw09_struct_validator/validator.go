@@ -18,16 +18,15 @@ type ValidationError struct {
 type ValidationErrors []ValidationError
 
 func (v ValidationErrors) Error() string {
-	var errors []string
-	for _, err := range v {
-		errors = append(errors, err.Field+": "+err.Err.Error())
+	errors := make([]string, len(v))
+	for i, err := range v {
+		errors[i] = err.Field + ": " + err.Err.Error()
 	}
 
 	return strings.Join(errors, ", ")
 }
 
 func Validate(v interface{}) error {
-
 	reflectType := reflect.TypeOf(v)
 	if reflectType.Kind() != reflect.Struct {
 		return nil
@@ -40,39 +39,40 @@ func Validate(v interface{}) error {
 		field := reflectType.Field(i)
 		tagString := field.Tag.Get("validate")
 		if tagString == "" {
-			continue
+			return nil
 		}
-
-		tags := strings.Split(tagString, "|")
-
 		val := reflectValue.Field(i)
-		_ = val
+		valiadtionErrors = append(valiadtionErrors, validateStructField(tagString, field, val)...)
+	}
 
-		for _, tag := range tags {
-			switch field.Type.Kind() {
+	if len(valiadtionErrors) == 0 {
+		return nil
+	}
+	return valiadtionErrors
+}
+
+func validateStructField(tagString string, field reflect.StructField, val reflect.Value) ValidationErrors {
+	valiadtionErrors := ValidationErrors{}
+	tags := strings.Split(tagString, "|")
+
+	for _, tag := range tags {
+		switch field.Type.Kind() { //nolint:exhaustive
+		case reflect.String, reflect.Int:
+			err := validateBaseType(field.Name, val, tag)
+			if err != nil {
+				valiadtionErrors = append(valiadtionErrors, *err)
+			}
+		case reflect.Slice:
+			if val.Len() == 0 {
+				continue
+			}
+
+			switch field.Type.Elem().Kind() { //nolint:exhaustive
 			case reflect.String, reflect.Int:
-				err := validateBaseType(val, tag)
-				if err != nil {
-					valiadtionErrors = append(valiadtionErrors, ValidationError{
-						Field: field.Name,
-						Err:   err,
-					})
-				}
-			case reflect.Slice:
-				if val.Len() == 0 {
-					continue
-				}
-
-				switch field.Type.Elem().Kind() {
-				case reflect.String, reflect.Int:
-					for i := 0; i < val.Len(); i++ {
-						err := validateBaseType(val.Index(i), tag)
-						if err != nil {
-							valiadtionErrors = append(valiadtionErrors, ValidationError{
-								Field: field.Name + "[" + strconv.Itoa(i) + "]",
-								Err:   err,
-							})
-						}
+				for i := 0; i < val.Len(); i++ {
+					err := validateBaseType(field.Name+"["+strconv.Itoa(i)+"]", val.Index(i), tag)
+					if err != nil {
+						valiadtionErrors = append(valiadtionErrors, *err)
 					}
 				}
 			}
@@ -82,19 +82,28 @@ func Validate(v interface{}) error {
 	if len(valiadtionErrors) == 0 {
 		return nil
 	}
-
 	return valiadtionErrors
 }
 
-func validateBaseType(value reflect.Value, tag string) error {
-	switch value.Kind() {
+func validateBaseType(fieldName string, value reflect.Value, tag string) *ValidationError {
+	var err error
+	switch value.Kind() { //nolint:exhaustive
 	case reflect.String:
-		return validateString(value.String(), tag)
+		err = validateString(value.String(), tag)
 	case reflect.Int:
-		return validateInt(int(value.Int()), tag)
+		err = validateInt(int(value.Int()), tag)
+	default:
+		panic(fmt.Sprintf("unknown type: %T", value))
 	}
 
-	panic(fmt.Sprintf("unknown type: %T", value))
+	if err == nil {
+		return nil
+	}
+
+	return &ValidationError{
+		Field: fieldName,
+		Err:   err,
+	}
 }
 
 func validateString(value string, tag string) error {
