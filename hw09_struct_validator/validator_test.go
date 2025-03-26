@@ -101,6 +101,7 @@ func TestValidate(t *testing.T) {
 			if tt.expectedErr == nil {
 				require.NoError(t, err)
 			} else {
+				require.NotNil(t, err)
 				require.Equal(t, tt.expectedErr.Error(), err.Error())
 			}
 		})

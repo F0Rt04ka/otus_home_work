@@ -39,7 +39,7 @@ func Validate(v interface{}) error {
 		field := reflectType.Field(i)
 		tagString := field.Tag.Get("validate")
 		if tagString == "" {
-			return nil
+			continue
 		}
 		val := reflectValue.Field(i)
 		valiadtionErrors = append(valiadtionErrors, validateStructField(tagString, field, val)...)
@@ -79,9 +79,6 @@ func validateStructField(tagString string, field reflect.StructField, val reflec
 		}
 	}
 
-	if len(valiadtionErrors) == 0 {
-		return nil
-	}
 	return valiadtionErrors
 }
 
