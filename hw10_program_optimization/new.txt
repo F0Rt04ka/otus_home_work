@@ -1,0 +1,11 @@
+goos: linux
+goarch: amd64
+pkg: github.com/F0Rt04ka/otus_home_work/hw10_program_optimization
+cpu: AMD Ryzen 5 3600X 6-Core Processor             
+BenchmarkGetDomainStat-12    	  634532	     10613 ns/op	    6395 B/op	      84 allocs/op
+BenchmarkGetDomainStat-12    	  526372	     10966 ns/op	    6395 B/op	      84 allocs/op
+BenchmarkGetDomainStat-12    	  524925	     11019 ns/op	    6395 B/op	      84 allocs/op
+BenchmarkGetDomainStat-12    	  528967	     10979 ns/op	    6395 B/op	      84 allocs/op
+BenchmarkGetDomainStat-12    	  535882	     10712 ns/op	    6395 B/op	      84 allocs/op
+PASS
+ok  	github.com/F0Rt04ka/otus_home_work/hw10_program_optimization	30.412s
